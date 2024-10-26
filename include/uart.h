@@ -15,12 +15,12 @@
 #define UART_LCRH_OFF       (0x2CU)
 #define UART_CR_OFF         (0x30U)
 
-#define REG_UART_DR(IDX)    ( (volatile u32 *) (PBASE + IDX + UART_DR_OFF) )
-#define REG_UART_FR(IDX)    ( (volatile u32 *) (PBASE + IDX + UART_FR_OFF) )
-#define REG_UART_IBRD(IDX)  ( (volatile u32 *) (PBASE + IDX + UART_IBRD_OFF) )
-#define REG_UART_FBRD(IDX)  ( (volatile u32 *) (PBASE + IDX + UART_FBRD_OFF) )
-#define REG_UART_LCRH(IDX)  ( (volatile u32 *) (PBASE + IDX + UART_LCRH_OFF) )
-#define REG_UART_CR(IDX)    ( (volatile u32 *) (PBASE + IDX + UART_CR_OFF) )
+#define REG_UART_DR(IDX)    ( (volatile u32 *) (PBASE + (uintptr_t)(IDX) + UART_DR_OFF) )
+#define REG_UART_FR(IDX)    ( (volatile u32 *) (PBASE + (uintptr_t)(IDX) + UART_FR_OFF) )
+#define REG_UART_IBRD(IDX)  ( (volatile u32 *) (PBASE + (uintptr_t)(IDX) + UART_IBRD_OFF) )
+#define REG_UART_FBRD(IDX)  ( (volatile u32 *) (PBASE + (uintptr_t)(IDX) + UART_FBRD_OFF) )
+#define REG_UART_LCRH(IDX)  ( (volatile u32 *) (PBASE + (uintptr_t)(IDX) + UART_LCRH_OFF) )
+#define REG_UART_CR(IDX)    ( (volatile u32 *) (PBASE + (uintptr_t)(IDX) + UART_CR_OFF) )
 
 #define UART_LCRH_MASK      (0xFFFFFF00U)
 #define UART_CR_MASK        (0xFFFF0078U)
@@ -28,4 +28,5 @@
 
 #define UART_CR_TXFF_BIT    (0x20U)
 
-void test_uart();
+void init_uart0();
+void outbyte(char c);

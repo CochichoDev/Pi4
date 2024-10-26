@@ -8,6 +8,22 @@
       "-O0",
       "-Wall",
       "-o",
+      "bin/gpio.o",
+      "src/gpio.c"
+    ],
+    "directory": "/home/cochicho/Documents/Pi4",
+    "file": "/home/cochicho/Documents/Pi4/src/gpio.c",
+    "output": "/home/cochicho/Documents/Pi4/bin/gpio.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/aarch64-none-elf-gcc",
+      "-Iinclude",
+      "-c",
+      "-g",
+      "-O0",
+      "-Wall",
+      "-o",
       "bin/main.o",
       "src/main.c"
     ],

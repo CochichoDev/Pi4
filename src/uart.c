@@ -1,14 +1,7 @@
 #include "gpio.h"
 #include "uart.h"
 
-void send_char(char c) {
-    /* Wait until transmission channel is empty */
-    while ((*REG_UART_FR(UART0) & UART_CR_TXFF_BIT));
-    /* Send the character */
-    *REG_UART_DR(UART0) = (c & UART_DR_TX_MASK);
-}
-
-void test_uart() {
+void init_uart0() {
     sel_gpio_func(GPIO_UART_RX0, ALT0_FUNC);
     conf_gpio_pupd(GPIO_UART_RX0, NO_RES);
     sel_gpio_func(GPIO_UART_TX0, ALT0_FUNC);
@@ -25,19 +18,11 @@ void test_uart() {
     /* Configure line control (ENABLE UART) */
     *REG_UART_CR(UART0) &= UART_CR_MASK;
     *REG_UART_CR(UART0) |= 0b0000000100000001;  //0b0000 0001 0000 0001
+}
 
-    while (1) {
-        send_char('H');
-        send_char('E');
-        send_char('L');
-        send_char('L');
-        send_char('O');
-        send_char(' ');
-        send_char('W');
-        send_char('O');
-        send_char('R');
-        send_char('L');
-        send_char('D');
-        send_char('\n');
-    }
+void outbyte(char c) {
+    /* Wait until transmission channel is empty */
+    while ((*REG_UART_FR(UART0) & UART_CR_TXFF_BIT));
+    /* Send the character */
+    *REG_UART_DR(UART0) = (c & UART_DR_TX_MASK);
 }

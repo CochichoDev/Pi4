@@ -25,10 +25,10 @@
 #define GPIO_GPCLR_OFF  (0x28U)
 #define GPIO_PU_PD_OFF  (0xE4U)
 
-#define REG_GPIO_GPFSEL(IDX)    ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPFSEL_OFF + (IDX / 10) * 0x4U) )
-#define REG_GPIO_GPSET(IDX)     ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPSET_OFF + (IDX / 32) * 0x4U) )
-#define REG_GPIO_GPCLR(IDX)     ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPCLR_OFF + (IDX / 32) * 0x4U) )
-#define REG_GPIO_PU_PD(IDX)     ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPCLR_OFF + (IDX / 16) * 0x4U) )
+#define REG_GPIO_GPFSEL(IDX)    ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPFSEL_OFF + ((uintptr_t)(IDX) / 10) * 0x4U) )
+#define REG_GPIO_GPSET(IDX)     ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPSET_OFF + ((uintptr_t)(IDX) / 32) * 0x4U) )
+#define REG_GPIO_GPCLR(IDX)     ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPCLR_OFF + ((uintptr_t)(IDX) / 32) * 0x4U) )
+#define REG_GPIO_PU_PD(IDX)     ( (volatile u32 *) (PBASE + GPIO_OFF + GPIO_GPCLR_OFF + ((uintptr_t)(IDX) / 16) * 0x4U) )
 
 #define SHIFT_GPIO_GPFSEL(IDX)  ( (IDX % 10) * 0x3U )
 #define SHIFT_GPIO_GPSET(IDX)   ( (IDX % 32) )

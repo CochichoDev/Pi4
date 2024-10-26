@@ -21,6 +21,11 @@ SECTIONS
     *(*.data)
 }
 . = ALIGN(0x8);
+.rodata : {
+    *(.rodata)
+    *(*.rodata)
+}
+. = ALIGN(0x8);
 .stack (NOLOAD) : {
     __stack_start = .;
     . += 0x100;
