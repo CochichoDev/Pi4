@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#define GPIO_OFF        (0x200000U)
+#define GPIO_OFF        (0x2200000U)
 
 #define INPUT_FUNC      (0x0U)
 #define OUTPUT_FUNC     (0x1U)
@@ -19,6 +19,8 @@
 
 #define GPIO_UART_TX0   14
 #define GPIO_UART_RX0   15
+#define GPIO_UART_TX4   8
+#define GPIO_UART_RX4   9
 
 #define GPIO_GPFSEL_OFF (0x0U)
 #define GPIO_GPSET_OFF  (0x1CU)

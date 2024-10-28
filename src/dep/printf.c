@@ -184,7 +184,7 @@ static int32_t getnum(char ** linep)
 
 int puts(const char *__restrict ctrl1)
 {
-    for (; *ctrl1 != 0; ctrl1++) outbyte(*ctrl1);
+    printf("%s", ctrl1);
     return 0;
 }
 
