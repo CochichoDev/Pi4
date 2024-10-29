@@ -70,4 +70,14 @@ void uart_hex(u64 num) {
 
 void uart_nl() {
     outbyte('\n');
+    outbyte('\r');
+}
+
+void get_uart_input(char input[], u32 max_size) {
+    char *ptr = input;
+    while ((ptr - input) < max_size) {
+        *ptr = inbyte();
+        if (*ptr == '\r' || *ptr == '\n') break;
+        ++ptr;
+    }
 }

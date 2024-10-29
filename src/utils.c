@@ -72,3 +72,56 @@ s32 tolower(s32 c) {
     if (ischar(c)) c |= 0x20;
     return c;
 }
+
+u64 parseUNum(const char *str, u64 len) {
+    if (len <= 0) return 0;
+
+    u64 num = 0;
+
+    struct {
+        u8 base;
+        u8 init;
+        const char *init_ptr;
+        const char *end_ptr;
+        u64 mul;
+    } p_info = {10, 0, str, str, 1};
+
+    // First pass
+    while (len-- > 0) {
+        if (isdigit(*str)) {
+            if (p_info.init == 0) {
+                if (tolower(*(str+1)) == 'x') {
+                    p_info.base = 16;
+                    p_info.end_ptr = ++str + 1;
+                } else p_info.end_ptr = str;
+                p_info.init = 1;
+            } 
+        } else {
+            if (p_info.init == 1 && !isdigit(*str)) {
+                p_info.init_ptr = str - 1;
+                break;
+            }
+        }
+        ++str;
+    }
+
+    if (len == 0) p_info.init_ptr = str - 1;
+
+    while (p_info.init_ptr >= p_info.end_ptr) {
+        num += (*p_info.init_ptr - '0') * p_info.mul;
+        p_info.mul *= p_info.base;
+        p_info.init_ptr--;
+    }
+
+    return num;
+}
+
+s32 strncmp(const char *s1, const char *s2, u64 len) {
+    if ( len <= 0 ) return 0;
+    u64 idx = 0;
+    while (idx++ < len ) {
+        if (*s1 != *s2 || *s1 == 0) return *s1 - *s2; 
+        ++s1; ++s2;
+    }
+    return *(s1-1) - *(s2-1);
+}
