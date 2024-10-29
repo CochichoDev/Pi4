@@ -33,11 +33,12 @@
 #define UART_IMSC_MASK      (0x7FFU)
 
 #define UART_FR_TXFF_BIT    (0x20U)
+#define UART_FR_RXFE_BIT    (0x10U)
 #define UART_FR_BUSY_BIT    (0x8U)
 
-void init_uart0();
-void init_uart4();
+void init_uart(u32 baudrate);
 void outbyte(char c);
+char inbyte();
 void uart_str(char *str);
 void uart_int(u64 num);
 void uart_hex(u64 num);

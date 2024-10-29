@@ -20,19 +20,8 @@
 #define REG_MBOX_RD_ST  ( (volatile u32 *) (PBASE + MBOX_OFF + MBOX_RD_ST_OFF) )
 #define REG_MBOX_WR_ST  ( (volatile u32 *) (PBASE + MBOX_OFF + MBOX_WR_ST_OFF) )
 
-typedef struct mtag_s {
-    u32             id;
-    u32             buf_size;
-    volatile u32    code;
-    volatile u32    result;
-} mtag;
-
-
-typedef struct __attribute__((aligned(16))) mbuffer_s {
-    u32             size;
-    volatile u32    status_code;
-    mtag            tag;
-    u32             ztag;
-} mbuffer;
-
+u32 mbox_get_arm_freq();
+u32 mbox_set_arm_freq(u32 freq, u32 disable_turbo);
+u32 mbox_get_uart_freq();
+u32 mbox_set_uart_freq(u32 uart_freq, u32 disable_turbo);
 void mbox_get_firmware_version();

@@ -5,11 +5,13 @@
 #include "asm.h"
 
 int main(void) {
+    mbox_set_uart_freq((BAUDRATE << 4)*10, 1);
+    init_uart(BAUDRATE);
     sel_gpio_func(4, OUTPUT_FUNC);
     set_gpio_output(4);
 
-    init_uart4();
-    mbox_get_firmware_version();
+    while (1)
+        outbyte(inbyte());
 
     return 0;
 }
