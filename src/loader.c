@@ -3,7 +3,11 @@
 #include "uart.h"
 #include "utils.h"
 #include "gpio.h"
-#include <stdint.h>
+#include "asm.h"
+
+#define DEBUG
+
+extern void *rst_addr;
 
 static u8 state = RUN;
 
@@ -22,25 +26,108 @@ static char *get_next_digit(char *str) {
     return str;
 }
 
-void loader_load_section(u8 *ptr, u64 size) {
+#define __arch64__
+
+void loader_load_section() {
+    /* Protocol 
+     * u32/u64  Size of Section
+     * u32/u64  VMA of Section
+     * u8[]     Data of Section
+     */
+    u8 num_bytes;
+    u8 *ptr;
+#if defined(__arch32__)
+    u32 size;
+    num_bytes = 4;
+#elif defined(__arch64__)
+    u64 size;
+    num_bytes = 8;
+#endif
+
+    char buffer[num_bytes];
+    for (u8 byte_idx = 0; byte_idx < num_bytes; ++byte_idx) {
+        buffer[byte_idx] = inbyte();
+    }
+#if defined(__arch32__)
+    size = *( (u32 *)buffer );
+#ifdef DEBUG
+    uart_str("Section size: ");
+    uart_hex(size);
+    uart_nl();
+#endif
+#elif defined(__arch64__)
+    size = *( (u64 *)buffer );
+#ifdef DEBUG
+    uart_str("Section size: ");
+    uart_hex(size);
+    uart_nl();
+#endif
+#endif
+
+    for (u8 byte_idx = 0; byte_idx < num_bytes; ++byte_idx) {
+        buffer[byte_idx] = inbyte();
+    }
+#if defined(__arch32__)
+    ptr = (u8 *) *( (u32 *)buffer );
+#ifdef DEBUG
+    uart_str("Section addr: ");
+    uart_hex((u32)ptr);
+    uart_nl();
+#endif
+#elif defined(__arch64__)
+    ptr = (u8 *) *( (u64 *)buffer );
+#ifdef DEBUG
+    uart_str("Section addr: ");
+    uart_hex((u64)ptr);
+    uart_nl();
+#endif
+#endif
+
     while (size-- > 0) {
         *ptr++ = inbyte();
     }
 }
 
+u8 loader_handle_entry(void *base_addr) {
+    // Send Protocol Header
+    /*
+     *  u8 -> Core Number that the elf is supposed to run on
+     *  u32/u64 -> Entry address for the elf execution
+     *  u8 -> Number of sections to load
+     */
+    
+    u8 core_num = inbyte();
+    u8 bytes_per_addr;
+
+#if defined(__arch32__)
+    bytes_per_addr = 4;
+#elif defined(__arch64__)
+    bytes_per_addr = 8;
+#else
+    #error "The platform architecture needs to be specified"
+#endif
+
+    u8 *addr = ( (u8 *)base_addr ) + (core_num * bytes_per_addr);;
+    for (u8 input = 0; input < bytes_per_addr; ++input) {
+        addr[input] = inbyte();
+    }
+
+    // Return the next byte == Number of sections
+    return inbyte();
+}
+
 void loader_scan_action() {
     uart_str("LOADER STARTED\n\r");
     char input[64];
-    char *ptr1, *ptr2;
+    char *ptr1;
     while (state) {
         uart_str("> ");
-        ptr1 = input; ptr2 = input;
+        ptr1 = input;
         get_uart_input(input, 64);
-        sel_gpio_func(4, OUTPUT_FUNC);
-        set_gpio_output(4);
         ptr1 = get_next_char(ptr1);
     
         if (!strncmp(ptr1, "LOAD", 4)) {
+            /*
             ptr2 = get_next_digit(ptr1);
             u64 arg1 = parseUNum(ptr2, 59);;
 
@@ -51,8 +138,21 @@ void loader_scan_action() {
             uart_hex(arg1); uart_nl();
             uart_str("With size of: ");
             uart_hex(arg2); uart_nl();
+            */
 
-            loader_load_section((u8 *)arg1, arg2);
+            u8 num_sections = loader_handle_entry(&rst_addr);
+            for (u8 sec_idx = 0; sec_idx < num_sections; ++sec_idx) {
+                loader_load_section();
+            }
+
+            void (*entry)() = rst_addr;
+#ifdef DEBUG
+            uart_str("Entry point: ");
+            uart_hex((u64)entry);
+            uart_nl();
+#endif
+            entry();
+
         } else if (!strncmp(ptr1, "EXIT", 4)) {
             uart_str("EXITING...\n\r");
             state = STOP;

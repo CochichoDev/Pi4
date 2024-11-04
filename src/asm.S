@@ -23,3 +23,4 @@ get_stack_size:
     bl get_base_sp
     sub x0, x1, x0
     ret
+

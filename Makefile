@@ -12,7 +12,7 @@ INCLUDE_DIR := include
 
 DEPLOY_DIR := /home/cochicho/mnt
 
-CPPFLAGS := -I$(INCLUDE_DIR)
+CPPFLAGS := -I$(INCLUDE_DIR) -D__arch64__
 CPFLAGS := -c -MMD -O0 -Wall -nostdlib
 ASFLAGS := -c -Wall -MMD
 LFLAGS := 
