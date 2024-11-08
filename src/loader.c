@@ -7,7 +7,7 @@
 
 #define DEBUG
 
-extern void *rst_addr;
+extern u64 rst_addr;
 
 static u8 state = RUN;
 
@@ -127,35 +127,27 @@ void loader_scan_action() {
         ptr1 = get_next_char(ptr1);
     
         if (!strncmp(ptr1, "LOAD", 4)) {
-            /*
-            ptr2 = get_next_digit(ptr1);
-            u64 arg1 = parseUNum(ptr2, 59);;
-
-            ptr2 = get_next_digit(get_next_space(ptr2));
-            u64 arg2 = parseUNum(ptr2, 20);
-    
-            uart_str("LOAD section at address: ");
-            uart_hex(arg1); uart_nl();
-            uart_str("With size of: ");
-            uart_hex(arg2); uart_nl();
-            */
-
             u8 num_sections = loader_handle_entry(&rst_addr);
             for (u8 sec_idx = 0; sec_idx < num_sections; ++sec_idx) {
                 loader_load_section();
             }
 
-            void (*entry)() = rst_addr;
-#ifdef DEBUG
-            uart_str("Entry point: ");
-            uart_hex((u64)entry);
-            uart_nl();
-#endif
-            entry();
+        } else if (!strncmp(ptr1, "RUN", 3)) {
+            __asm__ __volatile__("sev");
+
+        } else if (!strncmp(ptr1, "INFO", 4)) {
+            uart_str("INFO"); uart_nl();
+            uart_str("EP0: "); uart_hex(rst_addr); uart_nl();
+            uart_str("EP1: "); uart_hex(*(&rst_addr + 1)); uart_nl();
+            uart_str("EP2: "); uart_hex(*(&rst_addr + 2)); uart_nl();
+            uart_str("EP3: "); uart_hex(*(&rst_addr + 3)); uart_nl();
 
         } else if (!strncmp(ptr1, "EXIT", 4)) {
             uart_str("EXITING...\n\r");
             state = STOP;
+        } else {
+            uart_str("UNRECOGNIZED ACTION\n\r");
+
         }
     }
 }

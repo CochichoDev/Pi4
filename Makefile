@@ -37,7 +37,8 @@ LSCRIPT := lscript.ld
 
 .PHONY: clean deploy all
 
-all: $(TARGET) $(STUBBIN)
+#all: $(TARGET) $(STUBBIN)
+all: $(TARGET)
 
 
 $(STUBBIN): $(STUBOBJ)
@@ -69,7 +70,7 @@ $(BIN_DIR)/%.o: $(SRC_DIR)/%.c
 	@$(CC) $(CPPFLAGS) $(CPFLAGS) $< -o $@
 	@echo "$< was compiled"
 
-deploy: $(BIN_DIR)/$(STUBBIN) $(BIN_DIR)/$(TARGET) $(FIRMWARE_DIR)/config.txt
+deploy: $(BIN_DIR)/$(TARGET) $(FIRMWARE_DIR)/config.txt
 	$(RM) -f $(DEPLOY_DIR)/*
 	$(CP) $^ $(DEPLOY_DIR)/
 	$(CP) $(FIRMWARE_DIR)/start4.elf $(DEPLOY_DIR)/

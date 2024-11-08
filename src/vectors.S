@@ -53,13 +53,10 @@ _vtable:
     .org (VBAR+0x780)
     b _serror_exception
 
-#if defined(__arch32__)
-.align 0x4
-rst_addr:
-    .skip   0x16
-#elif defined(__arch64__)
 .align 0x8
 rst_addr:
-    .skip   0x32
-#endif
+    .quad   proc_hang
+    .quad   proc_hang
+    .quad   proc_hang
+    .quad   proc_hang
 

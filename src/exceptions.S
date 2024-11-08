@@ -9,14 +9,6 @@ _sync_exception:
 _irq_exception:
 _fiq_exception:
 _serror_exception:
-    ldr x0, =0xfe200028
-    orr w1, wzr, #0x10
-    str w1, [x0]
-
-hang:
-    wfe
-    b hang
-
     ldr x0, =0xfe200000
     ldr w1, [x0]
     ldr w2, =0xffff8fff

@@ -124,6 +124,7 @@ _start:
 	ldr x0, =0x30c50830
     msr SCTLR_EL3, x0
 
+    /*
 	mrs x6, MPIDR_EL1
 	and x6, x6, #0x3
 	cbz x6, primary_cpu
@@ -135,6 +136,7 @@ secondary_spin:
 	cbz x4, secondary_spin
 	mov x0, #0
 	b boot_kernel
+    */
 
 primary_cpu:
 	ldr w4, kernel_entry32
