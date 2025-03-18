@@ -1,5 +1,4 @@
 arm_64bit=1
 kernel_old=1
 disable_commandine_tags=1
-#armstub=armstub8.bin
 kernel=kernel8.img

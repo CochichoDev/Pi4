@@ -8,6 +8,7 @@
 #define DEBUG
 
 extern u64 rst_addr;
+extern u64 proc_hang;
 
 static u8 state = RUN;
 
@@ -134,6 +135,9 @@ void loader_scan_action() {
 
         } else if (!strncmp(ptr1, "RUN", 3)) {
             __asm__ __volatile__("sev");
+            if (rst_addr != proc_hang) {
+                ((void (*)())rst_addr)();
+            }
 
         } else if (!strncmp(ptr1, "INFO", 4)) {
             uart_str("INFO"); uart_nl();
