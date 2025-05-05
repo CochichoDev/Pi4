@@ -1,3 +1,5 @@
+.set L0Table, MMUTableL0.0
+
 .section ".text.boot", "x"
 .globl _start
 _start:
@@ -32,19 +34,19 @@ _start:
 	mov x0, #0x40
 	msr S3_0_C15_C1_4, x0
 
-	/*
-	 * Set up SCTLR_EL3
-	 * All set bits below are res1. LE, no WXN/I/SA/C/A/M
-	 */
-	ldr x0, =0x30c50830
+    // Disable MMU and caches
+    mov x0, #0
+    msr TTBR0_EL3, x0
     msr SCTLR_EL3, x0
-
-	mrs x0, MPIDR_EL1
-	and x0, x0, #0x3
-	cbnz x0, proc_hang
+    dsb sy
+    isb
 
     ldr x0, =_vtable
     msr VBAR_EL3, x0
+
+	mrs x0, MPIDR_EL1
+	and x0, x0, #0x3
+	cbnz x0, init_core
 
 	/*
 	 * LOCAL_CONTROL:
@@ -78,3 +80,4 @@ bss_end:
 
     bl main
     b proc_hang
+

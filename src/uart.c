@@ -1,8 +1,10 @@
+#include "asm.h"
 #include "common.h"
 #include "gpio.h"
 #include "uart.h"
 #include "utils.h"
 #include "mbox.h"
+
 
 static void uart_get_divisor(u32 div[], u32 baudrate) {
     u32 uart_freq = mbox_get_uart_freq();
@@ -36,24 +38,35 @@ void init_uart(u32 baudrate) {
     /* Configure line control (ENABLE UART) */
     *REG_UART_CR(STDOUT) &= UART_CR_MASK;
     *REG_UART_CR(STDOUT) |= 0b1100001100000001;  //0b1100 0001 0000 0001
+    asm volatile("dmb sy");
 }
 
 void outbyte(char c) {
     /* Wait until transmission channel is empty */
-    while ((*REG_UART_FR(STDOUT) & UART_FR_TXFF_BIT));
+    while(*REG_UART_FR(STDOUT) & UART_FR_TXFF_BIT);
     /* Send the character */
     *REG_UART_DR(STDOUT) = (c & UART_DR_TX_MASK);
 }
 
 char inbyte() {
     /* Wait until transmission channel is empty */
-    while ((*REG_UART_FR(STDOUT) & UART_FR_RXFE_BIT));
+    while(*REG_UART_FR(STDOUT) & UART_FR_RXFE_BIT);
     /* Send the character */
-    return (*REG_UART_DR(STDOUT) & UART_DR_TX_MASK);
+    return *REG_UART_DR(STDOUT) & UART_DR_TX_MASK;
+}
+
+void drain_uart_input() {
+    volatile char tmp = 0;
+    while((*REG_UART_FR(STDOUT) & UART_FR_RXFF_BIT)) {
+        tmp = (volatile u8) *REG_UART_DR(STDOUT);
+    }
 }
 
 void uart_str(char *str) {
-    for (; *str != 0; str++) outbyte(*str);
+    while (*str != 0) {
+        outbyte(*str);
+        str++;
+    }
 }
 
 void uart_int(u64 num) {
@@ -70,7 +83,6 @@ void uart_hex(u64 num) {
 
 void uart_nl() {
     outbyte('\n');
-    outbyte('\r');
 }
 
 void get_uart_input(char input[], u32 max_size) {
@@ -80,4 +92,5 @@ void get_uart_input(char input[], u32 max_size) {
         if (*ptr == '\r' || *ptr == '\n') break;
         ++ptr;
     }
+    *ptr = 0;
 }

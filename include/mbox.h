@@ -20,6 +20,7 @@
 #define REG_MBOX_RD_ST  ( (volatile u32 *) (PBASE + MBOX_OFF + MBOX_RD_ST_OFF) )
 #define REG_MBOX_WR_ST  ( (volatile u32 *) (PBASE + MBOX_OFF + MBOX_WR_ST_OFF) )
 
+u32 mbox_get_core_freq();
 u32 mbox_get_arm_freq();
 u32 mbox_set_arm_freq(u32 freq, u32 disable_turbo);
 u32 mbox_get_uart_freq();

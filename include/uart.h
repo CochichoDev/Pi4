@@ -33,6 +33,7 @@
 #define UART_IMSC_MASK      (0x7FFU)
 
 #define UART_FR_TXFF_BIT    (0x20U)
+#define UART_FR_RXFF_BIT    (0x40U)
 #define UART_FR_RXFE_BIT    (0x10U)
 #define UART_FR_BUSY_BIT    (0x8U)
 
@@ -44,3 +45,4 @@ void uart_int(u64 num);
 void uart_hex(u64 num);
 void uart_nl();
 void get_uart_input(char input[], u32 max_size);
+void drain_uart_input();

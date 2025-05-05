@@ -1,3 +1,7 @@
+#define ASSEMBLY
+
+#include "gic.h"
+
 .section .text
 
 .globl _sync_exception
@@ -5,10 +9,14 @@
 .globl _fiq_exception
 .globl _serror_exception
 
-_sync_exception:
+
 _irq_exception:
+    b irq_handler
+_sync_exception:
+    b sync_handler
 _fiq_exception:
 _serror_exception:
+    /* Make LED blink forever */
     ldr x0, =0xfe200000
     ldr w1, [x0]
     ldr w2, =0xffff8fff

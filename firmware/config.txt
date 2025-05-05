@@ -2,3 +2,4 @@ arm_64bit=1
 kernel_old=1
 disable_commandine_tags=1
 kernel=kernel8.img
+enable_gic=1

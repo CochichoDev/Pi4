@@ -80,10 +80,23 @@ static u32 mbox_get_info(u32 response[], u32 tag, u32 req_size, u32 req[], u32 r
     return mbox_get_response(response, buffer);
 }
 
+u32 mbox_get_core_freq() {
+    u32 response[16];
+
+    if (mbox_get_info(response, 0x00030002, 4, (u32 []) {0x4}, 8) < 8 ||
+        response[0] != 0x4) return 0;
+
+#ifdef DEBUG
+    uart_str("ARM Freq: "); uart_int(response[1]); uart_nl();
+#endif
+
+    return response[1];
+}
+
 u32 mbox_get_arm_freq() {
     u32 response[16];
 
-    if (mbox_get_info(response, 0x00030001, 4, (u32 []) {0x3}, 8) < 8 ||
+    if (mbox_get_info(response, 0x00030002, 4, (u32 []) {0x3}, 8) < 8 ||
         response[0] != 0x3) return 0;
 
 #ifdef DEBUG
@@ -109,7 +122,7 @@ u32 mbox_set_arm_freq(u32 freq, u32 disable_turbo) {
 u32 mbox_get_uart_freq() {
     u32 uart_response[16];
     
-    if (mbox_get_info(uart_response, 0x00030001, 4, (u32 []) {0x2}, 8) < 8 ||
+    if (mbox_get_info(uart_response, 0x00030002, 4, (u32 []) {0x2}, 8) < 8 ||
         uart_response[0] != 0x2) {
         return 0;
     }
