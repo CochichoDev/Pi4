@@ -6,7 +6,7 @@
 #include "loader.h"
 
 int main(void) {
-    mbox_set_arm_freq(2000000000, 0);
+    //mbox_set_arm_freq(2000000000, 0);
     mbox_set_uart_freq((BAUDRATE << 4)*10, 1);
     init_uart(BAUDRATE);
 
